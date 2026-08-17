@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════
+   NOVA OS — Global CSS & Design System
+   ══════════════════════════════════════════════════ */
+
+@theme {
+  /* ─── Color Tokens ─────────────────────────────── */
+  --color-nova-black:      #050507;
+  --color-nova-dark:       #0a0b0f;
+  --color-nova-darker:     #0d0e14;
+  --color-nova-surface:    #12141c;
+  --color-nova-surface-2:  #181a24;
+  --color-nova-surface-3:  #1e2030;
+  --color-nova-border:     rgba(255, 255, 255, 0.06);
+  --color-nova-border-2:   rgba(255, 255, 255, 0.10);
+  --color-nova-muted:      rgba(255, 255, 255, 0.35);
+  --color-nova-text:       rgba(255, 255, 255, 0.90);
+  --color-nova-text-dim:   rgba(255, 255, 255, 0.55);
+
+  /* Accent — Violet (default, overridden by JS) */
+  --color-accent:          #7c3aed;
+  --color-accent-light:    #8b5cf6;
+  --color-accent-dim:      rgba(124, 58, 237, 0.15);
+  --color-accent-glow:     rgba(124, 58, 237, 0.35);
+
+  /* Status */
+  --color-success:         #22c55e;
+  --color-warning:         #f59e0b;
+  --color-error:           #ef4444;
+  --color-info:            #3b82f6;
+
+  /* ─── Typography ───────────────────────────────── */
+  --font-sans:   'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+  --font-mono:   'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* ─── Shadows ──────────────────────────────────── */
+  --shadow-window: 0 32px 80px rgba(0,0,0,0.65), 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+  --shadow-window-focus: 0 32px 80px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.25);
+  --shadow-taskbar: 0 -1px 0 rgba(255,255,255,0.05), 0 -8px 32px rgba(0,0,0,0.4);
+  --shadow-panel:   0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.07);
+  --shadow-dropdown: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+  --shadow-notification: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+  --shadow-glow-accent: 0 0 20px var(--color-accent-glow);
+
+  /* ─── Border Radii ─────────────────────────────── */
+  --radius-window: 12px;
+  --radius-panel:  10px;
+  --radius-card:   8px;
+  --radius-btn:    6px;
+  --radius-sm:     4px;
+
+  /* ─── Spacing Scale ────────────────────────────── */
+  --spacing-taskbar-height: 52px;
+
+  /* ─── Animation ────────────────────────────────── */
+  --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
+  --duration-fast:   120ms;
+  --duration-base:   200ms;
+  --duration-slow:   350ms;
+  --duration-page:   500ms;
+}
+
+/* ──────────────────────────────────────────────────
+   Base Reset & Body
+────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-nova-black);
+  color: var(--color-nova-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ──────────────────────────────────────────────────
+   Scrollbar Styling
+────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+/* ──────────────────────────────────────────────────
+   Selection
+────────────────────────────────────────────────── */
+::selection {
+  background: var(--color-accent-dim);
+  color: var(--color-nova-text);
+}
+
+/* ──────────────────────────────────────────────────
+   Glassmorphism Utilities
+────────────────────────────────────────────────── */
+.glass {
+  background: rgba(18, 20, 28, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--color-nova-border);
+}
+
+.glass-light {
+  background: rgba(30, 32, 48, 0.70);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--color-nova-border-2);
+}
+
+.glass-heavy {
+  background: rgba(10, 11, 15, 0.92);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border: 1px solid var(--color-nova-border);
+}
+
+/* ──────────────────────────────────────────────────
+   Typography
+────────────────────────────────────────────────── */
+.font-mono { font-family: var(--font-mono); }
+
+/* ──────────────────────────────────────────────────
+   Accent Color Overrides (set by Settings store)
+────────────────────────────────────────────────── */
+[data-accent="violet"] {
+  --color-accent: #7c3aed;
+  --color-accent-light: #8b5cf6;
+  --color-accent-dim: rgba(124, 58, 237, 0.15);
+  --color-accent-glow: rgba(124, 58, 237, 0.35);
+}
+[data-accent="indigo"] {
+  --color-accent: #4f46e5;
+  --color-accent-light: #6366f1;
+  --color-accent-dim: rgba(79, 70, 229, 0.15);
+  --color-accent-glow: rgba(79, 70, 229, 0.35);
+}
+[data-accent="cyan"] {
+  --color-accent: #0891b2;
+  --color-accent-light: #06b6d4;
+  --color-accent-dim: rgba(8, 145, 178, 0.15);
+  --color-accent-glow: rgba(8, 145, 178, 0.35);
+}
+[data-accent="blue"] {
+  --color-accent: #2563eb;
+  --color-accent-light: #3b82f6;
+  --color-accent-dim: rgba(37, 99, 235, 0.15);
+  --color-accent-glow: rgba(37, 99, 235, 0.35);
+}
+[data-accent="emerald"] {
+  --color-accent: #059669;
+  --color-accent-light: #10b981;
+  --color-accent-dim: rgba(5, 150, 105, 0.15);
+  --color-accent-glow: rgba(5, 150, 105, 0.35);
+}
+[data-accent="rose"] {
+  --color-accent: #e11d48;
+  --color-accent-light: #f43f5e;
+  --color-accent-dim: rgba(225, 29, 72, 0.15);
+  --color-accent-glow: rgba(225, 29, 72, 0.35);
+}
+
+/* ──────────────────────────────────────────────────
+   Window Chrome
+────────────────────────────────────────────────── */
+.window-base {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+  background: var(--color-nova-surface);
+  border: 1px solid var(--color-nova-border);
+  transition: box-shadow var(--duration-base) ease;
+}
+
+.window-base.focused {
+  box-shadow: var(--shadow-window-focus);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.window-titlebar {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.025);
+  border-bottom: 1px solid var(--color-nova-border);
+  cursor: grab;
+  user-select: none;
+}
+
+.window-titlebar:active { cursor: grabbing; }
+
+/* Traffic Light Buttons */
+.traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: filter var(--duration-fast) ease, transform var(--duration-fast) ease;
+  position: relative;
+  flex-shrink: 0;
+}
+.traffic-light:hover { filter: brightness(1.2); transform: scale(1.1); }
+.traffic-light.close   { background: #ff5f57; }
+.traffic-light.minimize { background: #ffbd2e; }
+.traffic-light.maximize { background: #28ca41; }
+
+/* ──────────────────────────────────────────────────
+   Resize Handles
+────────────────────────────────────────────────── */
+.resize-handle {
+  position: absolute;
+  z-index: 10;
+}
+.resize-handle.se { bottom: 0; right: 0; width: 16px; height: 16px; cursor: se-resize; }
+.resize-handle.sw { bottom: 0; left: 0; width: 16px; height: 16px; cursor: sw-resize; }
+.resize-handle.ne { top: 0; right: 0; width: 16px; height: 16px; cursor: ne-resize; }
+.resize-handle.nw { top: 0; left: 0; width: 16px; height: 16px; cursor: nw-resize; }
+.resize-handle.n  { top: 0; left: 8px; right: 8px; height: 4px; cursor: n-resize; }
+.resize-handle.s  { bottom: 0; left: 8px; right: 8px; height: 4px; cursor: s-resize; }
+.resize-handle.e  { top: 8px; right: 0; bottom: 8px; width: 4px; cursor: e-resize; }
+.resize-handle.w  { top: 8px; left: 0; bottom: 8px; width: 4px; cursor: w-resize; }
+
+/* ──────────────────────────────────────────────────
+   Terminal Styles
+────────────────────────────────────────────────── */
+.terminal-container .xterm {
+  padding: 12px;
+  height: 100%;
+}
+.terminal-container .xterm-viewport {
+  overflow-y: auto !important;
+}
+
+/* ──────────────────────────────────────────────────
+   Context Menu
+────────────────────────────────────────────────── */
+.context-menu {
+  position: fixed;
+  z-index: 99999;
+  min-width: 200px;
+  padding: 4px;
+  border-radius: var(--radius-card);
+  background: rgba(18, 20, 28, 0.96);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow-dropdown);
+}
+
+/* ──────────────────────────────────────────────────
+   Taskbar
+────────────────────────────────────────────────── */
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--spacing-taskbar-height);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  background: rgba(8, 9, 13, 0.88);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  box-shadow: var(--shadow-taskbar);
+}
+
+/* ──────────────────────────────────────────────────
+   Animations
+────────────────────────────────────────────────── */
+@keyframes nova-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1.0; }
+}
+
+@keyframes nova-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes nova-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes nova-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-nova-pulse  { animation: nova-pulse 2s ease-in-out infinite; }
+.animate-nova-spin   { animation: nova-spin 1s linear infinite; }
+.animate-nova-float  { animation: nova-float 4s ease-in-out infinite; }
+
+/* ──────────────────────────────────────────────────
+   Reduced Motion
+────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────
+   Misc Utilities
+────────────────────────────────────────────────── */
+.no-select { user-select: none; }
+.text-select { user-select: text; }
+.cursor-default { cursor: default; }
+.cursor-text { cursor: text; }
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+}
+
+/* Drag-over highlight */
+.drop-target-active {
+  background: var(--color-accent-dim) !important;
+  border-color: var(--color-accent-light) !important;
+}
