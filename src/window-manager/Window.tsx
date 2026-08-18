@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Square, X, Maximize2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Minus, X, Maximize2 } from 'lucide-react';
 import { useWindowStore } from '@/stores/windowStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useDraggable } from '@/hooks/useDraggable';
@@ -44,12 +44,10 @@ export const Window: React.FC<WindowProps> = ({ instance, children }) => {
     onResizeEnd: (newRect) => updateWindowRect(id, newRect)
   });
 
-  // Sync external rect updates (e.g. restore from maximized)
+  // Sync external rect updates
   useEffect(() => {
     if (state === 'normal') {
-      // Need a way to sync useDraggable and useResizable internally
-      // For a simpler approach, we'll let Framer Motion drive the final position
-      // based on instance.rect, but if user drags, we use dragPos.
+      // Handled by Framer Motion rendering
     }
   }, [state, rect]);
 
@@ -69,27 +67,31 @@ export const Window: React.FC<WindowProps> = ({ instance, children }) => {
   const currentWidth = isMaximized ? '100vw' : resizeRect.width;
   const currentHeight = isMaximized ? `calc(100vh - ${TASKBAR_HEIGHT}px)` : resizeRect.height;
 
-  const spring: any = { type: "spring", stiffness: 400, damping: 30 };
-  const transition = animationIntensity === 'none' ? { duration: 0 } : (animationIntensity === 'reduced' ? { duration: 0.15 } : spring);
+  const spring = { type: "spring" as const, stiffness: 380, damping: 28 };
+  const transition = animationIntensity === 'none' 
+    ? { duration: 0 } 
+    : (animationIntensity === 'reduced' ? { duration: 0.15 } : spring);
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 10 }}
+      initial={{ opacity: 0, scale: 0.97, y: 4 }}
       animate={{ 
-        opacity: 1, 
-        scale: 1,
+        opacity: isFocused ? 1.0 : 0.88, 
+        scale: isMaximized ? 1.0 : (isFocused ? 1.0 : 0.99),
         x: currentX, 
         y: currentY, 
         width: currentWidth, 
         height: currentHeight 
       }}
-      exit={{ opacity: 0, scale: 0.95, y: 10 }}
+      exit={{ opacity: 0, scale: 0.97, y: 4 }}
       transition={transition}
       style={{ zIndex }}
       className={twMerge(
         clsx(
-          "window-base flex flex-col absolute",
-          isFocused && "focused",
+          "window-base flex flex-col absolute transition-all duration-300",
+          isFocused 
+            ? "border-accent/25 shadow-window-focus" 
+            : "border-white/[0.04] shadow-window",
           windowTransparency && "glass-heavy",
           !windowTransparency && "bg-nova-surface",
           isMaximized && "rounded-none border-0"
@@ -100,44 +102,68 @@ export const Window: React.FC<WindowProps> = ({ instance, children }) => {
       {/* Title Bar */}
       <div 
         ref={titleBarRef}
-        className="window-titlebar flex justify-between"
+        className={clsx(
+          "window-titlebar flex justify-between items-center transition-all duration-300 px-4",
+          isFocused 
+            ? "bg-[#13151f]/85 border-b border-white/[0.06] h-[38px]" 
+            : "bg-[#0f1017]/70 border-b border-white/[0.04] h-[38px]"
+        )}
         onDoubleClick={handleDoubleClickTitle}
       >
-        {/* Left: Window Controls (macOS style) */}
-        <div className="flex gap-2 items-center">
-          <button className="traffic-light close flex items-center justify-center group" onClick={(e) => { e.stopPropagation(); closeWindow(id); }}>
-            <X size={10} className="opacity-0 group-hover:opacity-100 text-black/50" />
-          </button>
-          <button className="traffic-light minimize flex items-center justify-center group" onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }}>
-            <Minus size={10} className="opacity-0 group-hover:opacity-100 text-black/50" />
+        {/* Left: Window Controls (macOS style) with active / inactive opacity states */}
+        <div 
+          className={clsx(
+            "flex gap-2 items-center transition-opacity duration-300", 
+            isFocused ? "opacity-100" : "opacity-45 hover:opacity-100"
+          )}
+        >
+          <button 
+            className="traffic-light close flex items-center justify-center group cursor-pointer" 
+            onClick={(e) => { e.stopPropagation(); closeWindow(id); }}
+            aria-label="Close window"
+          >
+            <X size={7.5} strokeWidth={3} className="opacity-0 group-hover:opacity-100 text-black/50 transition-opacity" />
           </button>
           <button 
-            className="traffic-light maximize flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="traffic-light minimize flex items-center justify-center group cursor-pointer" 
+            onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }}
+            aria-label="Minimize window"
+          >
+            <Minus size={7.5} strokeWidth={3} className="opacity-0 group-hover:opacity-100 text-black/50 transition-opacity" />
+          </button>
+          <button 
+            className="traffic-light maximize flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer" 
             disabled={!isResizable}
             onClick={(e) => { 
               e.stopPropagation(); 
               if(isResizable) isMaximized ? restoreWindow(id) : maximizeWindow(id); 
             }}
+            aria-label="Maximize window"
           >
             {isMaximized ? (
-              <Minus size={10} className="opacity-0 group-hover:opacity-100 text-black/50" />
+              <Minus size={7.5} strokeWidth={3} className="opacity-0 group-hover:opacity-100 text-black/50 transition-opacity" />
             ) : (
-              <Maximize2 size={10} className="opacity-0 group-hover:opacity-100 text-black/50" />
+              <Maximize2 size={7.5} strokeWidth={3} className="opacity-0 group-hover:opacity-100 text-black/50 transition-opacity" />
             )}
           </button>
         </div>
 
         {/* Center: Title */}
-        <div className="text-xs font-semibold text-nova-text text-center flex-1 no-select truncate px-4">
+        <div 
+          className={clsx(
+            "text-[11px] tracking-wider text-center flex-1 no-select truncate px-4 font-normal transition-colors duration-300",
+            isFocused ? "text-white/85" : "text-white/35"
+          )}
+        >
           {title}
         </div>
 
-        {/* Right: Spacer to balance */}
+        {/* Right: Spacer to balance traffic lights */}
         <div className="w-[52px]"></div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-hidden relative flex flex-col bg-black/40">
+      {/* Content Area */}
+      <div className="flex-1 overflow-hidden relative flex flex-col bg-black/35">
         {children}
       </div>
 

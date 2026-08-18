@@ -325,6 +325,59 @@ body {
 .animate-nova-float  { animation: nova-float 4s ease-in-out infinite; }
 
 /* ──────────────────────────────────────────────────
+   Login Screen — Ambient Animations
+────────────────────────────────────────────────── */
+
+/* Slow atmospheric orb drift — 80s cycle, imperceptible unless watched closely */
+@keyframes login-drift-a {
+  0%   { transform: translate(0%, 0%)   scale(1);    opacity: 0.18; }
+  33%  { transform: translate(4%, -3%)  scale(1.06); opacity: 0.22; }
+  66%  { transform: translate(-3%, 5%)  scale(0.96); opacity: 0.16; }
+  100% { transform: translate(0%, 0%)   scale(1);    opacity: 0.18; }
+}
+
+@keyframes login-drift-b {
+  0%   { transform: translate(0%, 0%)   scale(1);    opacity: 0.12; }
+  40%  { transform: translate(-5%, 3%)  scale(1.08); opacity: 0.16; }
+  70%  { transform: translate(3%, -4%)  scale(0.94); opacity: 0.10; }
+  100% { transform: translate(0%, 0%)   scale(1);    opacity: 0.12; }
+}
+
+/* Rotating conic-gradient for avatar border ring */
+@keyframes login-ring-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Single scanline sweep on page load */
+@keyframes login-scanline {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  5%   { opacity: 0.06; }
+  95%  { opacity: 0.06; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Subtle data-grid pulse */
+@keyframes login-grid-breathe {
+  0%, 100% { opacity: 0.018; }
+  50%       { opacity: 0.032; }
+}
+
+/* Access-granted brightness flash */
+@keyframes login-granted-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.animate-login-drift-a    { animation: login-drift-a   80s ease-in-out infinite; }
+.animate-login-drift-b    { animation: login-drift-b   95s ease-in-out infinite; }
+.animate-login-ring       { animation: login-ring-rotate 8s linear infinite; }
+.animate-login-scanline   { animation: login-scanline  4s ease-in-out 0.8s 1 forwards; }
+.animate-login-grid       { animation: login-grid-breathe 6s ease-in-out infinite; }
+
+/* ──────────────────────────────────────────────────
    Reduced Motion
 ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

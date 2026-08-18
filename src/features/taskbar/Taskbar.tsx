@@ -33,9 +33,6 @@ export const Taskbar: React.FC = () => {
         focusWindow(win.id);
       }
     } else {
-      // Multiple windows open: simple behavior is focus the most recently active one,
-      // or if it's already focused, minimize it.
-      // (A real OS would show a thumbnail preview here)
       const win = appWindows.find(w => w.id === activeWindowId) || appWindows[0];
       if (win.id === activeWindowId && win.state !== 'minimized') {
         minimizeWindow(win.id);
@@ -46,27 +43,46 @@ export const Taskbar: React.FC = () => {
     }
   };
 
+  const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  const formattedDate = time.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase();
+
   return (
     <>
       {showStartMenu && <StartMenu onClose={() => setShowStartMenu(false)} />}
       
-      <div className="taskbar pointer-events-auto">
-        {/* Start Button */}
-        <button 
-          className={clsx(
-            "w-10 h-10 mx-1 rounded-md flex items-center justify-center transition-colors",
-            showStartMenu ? "bg-white/20" : "hover:bg-white/10"
-          )}
-          onClick={() => setShowStartMenu(!showStartMenu)}
-        >
-          <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-accent to-accent-light shadow-glow-accent" />
-        </button>
+      {/* ── Refined Symmetrical Taskbar ── */}
+      <div className="taskbar pointer-events-auto grid grid-cols-3 w-full px-4 items-center justify-between">
+        
+        {/* Left Zone: Start Button / Launcher */}
+        <div className="flex items-center justify-start">
+          <button 
+            className={clsx(
+              "w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer",
+              showStartMenu 
+                ? "bg-accent-dim/40 border border-accent/25 shadow-glow-accent/15" 
+                : "bg-transparent border border-transparent hover:bg-white/[0.04] hover:border-white/[0.06] hover:scale-105 active:scale-95"
+            )}
+            onClick={() => setShowStartMenu(!showStartMenu)}
+            title="NOVA Menu"
+          >
+            {/* Custom vector launcher sigil (matching center diamond/star theme) */}
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path 
+                d="M10 1.5L12.7 7.3L18.5 10L12.7 12.7L10 18.5L7.3 12.7L1.5 10L7.3 7.3L10 1.5Z" 
+                fill="url(#launcher-grad)" 
+              />
+              <defs>
+                <linearGradient id="launcher-grad" x1="1.5" y1="1.5" x2="18.5" y2="18.5" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#a78bfa" />
+                  <stop offset="1" stopColor="#7c3aed" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </button>
+        </div>
 
-        {/* Divider */}
-        <div className="w-px h-6 bg-white/10 mx-1" />
-
-        {/* App Icons */}
-        <div className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
+        {/* Center Zone: Active/Pinned Apps Area */}
+        <div className="flex items-center justify-center gap-1.5 overflow-x-auto no-scrollbar max-w-full">
           {allTaskbarAppIds.map(appId => {
             const app = getApp(appId);
             if (!app) return null;
@@ -81,39 +97,55 @@ export const Taskbar: React.FC = () => {
                 key={appId}
                 onClick={() => handleAppClick(appId)}
                 className={clsx(
-                  "relative w-10 h-10 rounded-md flex items-center justify-center transition-all group",
-                  isActive ? "bg-white/15" : "hover:bg-white/10"
+                  "relative w-9.5 h-9.5 rounded-lg flex items-center justify-center transition-all duration-200 group border cursor-pointer",
+                  isActive 
+                    ? "bg-white/[0.08] border-white/[0.06] shadow-sm shadow-black/35" 
+                    : "bg-transparent border-transparent hover:bg-white/[0.03] hover:border-white/[0.04] hover:-translate-y-[2px]"
                 )}
                 title={app.name}
               >
                 <IconComponent 
-                  size={20} 
-                  className={clsx("transition-transform group-hover:scale-110", isActive ? "text-white" : "text-white/80")} 
-                  strokeWidth={isActive ? 2 : 1.5}
+                  size={17} 
+                  className={clsx(
+                    "transition-all duration-200", 
+                    isActive ? "text-white scale-105" : "text-white/60 group-hover:text-white/95"
+                  )} 
+                  strokeWidth={1.5}
                 />
                 
-                {/* Running Indicator */}
+                {/* Modern Indicator Dot */}
                 {isRunning && (
-                  <div className={clsx(
-                    "absolute bottom-0 left-1/2 -translate-x-1/2 h-[3px] rounded-t-sm transition-all",
-                    isActive ? "w-4 bg-accent-light" : "w-1.5 bg-white/40"
-                  )} />
+                  <div 
+                    className={clsx(
+                      "absolute bottom-[2px] left-1/2 -translate-x-1/2 h-[3.5px] rounded-full transition-all duration-300",
+                      isActive 
+                        ? "w-2.5 bg-accent-light shadow-glow-accent" 
+                        : "w-1 bg-white/40"
+                    )} 
+                  />
                 )}
               </button>
             );
           })}
         </div>
 
-        {/* System Tray & Clock */}
-        <div className="flex items-center gap-2 pr-2">
-          <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-white/10 transition-colors text-white/80">
-            <Icons.Wifi size={16} />
-            <Icons.Volume2 size={16} />
-            <Icons.Battery size={16} />
+        {/* Right Zone: System Tray & Clock */}
+        <div className="flex items-center justify-end gap-1">
+          {/* System status tray */}
+          <div className="flex items-center gap-2.5 px-2.5 py-1 rounded-lg hover:bg-white/[0.03] transition-colors text-white/65 hover:text-white/90 cursor-pointer">
+            <Icons.Wifi size={14} strokeWidth={1.5} />
+            <Icons.Volume2 size={14} strokeWidth={1.5} />
+            <Icons.Battery size={14} strokeWidth={1.5} />
           </div>
-          <div className="text-xs text-right leading-tight px-2 py-1 rounded hover:bg-white/10 transition-colors select-none">
-            <div>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-            <div className="text-[10px] text-white/60">{time.toLocaleDateString()}</div>
+          
+          {/* Clock */}
+          <div className="text-right select-none px-2.5 py-0.5 rounded-lg hover:bg-white/[0.03] transition-colors cursor-pointer flex flex-col items-end">
+            <div className="text-[11.5px] text-white/90 font-medium tracking-wide">
+              {formattedTime}
+            </div>
+            <div className="text-[9px] text-white/40 tracking-widest font-normal mt-0.5">
+              {formattedDate}
+            </div>
           </div>
         </div>
       </div>

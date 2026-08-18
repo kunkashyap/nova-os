@@ -47,17 +47,35 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({ icon }) => {
     <div
       ref={ref}
       className={clsx(
-        "absolute flex flex-col items-center justify-start w-[72px] h-[84px] p-1 rounded transition-colors pointer-events-auto",
-        isSelected ? "bg-white/20 border border-white/20" : "hover:bg-white/10 border border-transparent"
+        "absolute flex flex-col items-center justify-center w-[74px] h-[86px] p-2 rounded-xl border transition-all duration-200 ease-out pointer-events-auto select-none group",
+        isSelected 
+          ? "bg-accent-dim/40 border-accent/25 shadow-glow-accent/10" 
+          : "bg-transparent border-transparent hover:bg-white/[0.03] hover:border-white/[0.05] hover:-translate-y-[2px]"
       )}
       style={{ left: position.x, top: position.y }}
       onPointerDown={handlePointerDown}
       onDoubleClick={handleDoubleClick}
     >
-      <div className="w-10 h-10 flex items-center justify-center text-white drop-shadow-md mb-1">
-        <IconComponent size={32} strokeWidth={1.5} />
+      {/* Icon Wrapper */}
+      <div className="relative w-11 h-11 flex items-center justify-center text-white/90 group-hover:text-white mb-2 transition-colors">
+        <IconComponent size={28} strokeWidth={1.25} />
+        
+        {/* Subtle dot at corner for selected state */}
+        {isSelected && (
+          <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-accent-light shadow-glow-accent" />
+        )}
       </div>
-      <span className="text-xs text-white text-center w-full truncate px-1 drop-shadow-md text-shadow">
+
+      {/* Icon Label */}
+      <span 
+        className={clsx(
+          "text-[11px] text-center w-full truncate px-1 tracking-wide transition-all select-none font-normal",
+          isSelected ? "text-white font-medium" : "text-white/80 group-hover:text-white"
+        )}
+        style={{
+          textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.5)'
+        }}
+      >
         {icon.label}
       </span>
     </div>

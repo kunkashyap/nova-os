@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { ContextMenuItem } from '@/types';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { clsx } from 'clsx';
@@ -32,9 +32,8 @@ export const ContextMenuProvider: React.FC<{ children: React.ReactNode }> = ({ c
     let x = e.clientX;
     let y = e.clientY;
     
-    // Rough estimate of menu size based on items
-    const menuHeight = newItems.length * 36;
-    const menuWidth = 220;
+    const menuHeight = newItems.length * 32;
+    const menuWidth = 190;
 
     if (x + menuWidth > window.innerWidth) x -= menuWidth;
     if (y + menuHeight > window.innerHeight) y -= menuHeight;
@@ -67,17 +66,24 @@ const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y:
   return createPortal(
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.1 }}
-      className="context-menu flex flex-col py-1"
-      style={{ top: position.y, left: position.x }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.12, ease: "easeOut" }}
+      className="context-menu flex flex-col py-1 shadow-dropdown border border-white/[0.06] backdrop-blur-3xl"
+      style={{ 
+        top: position.y, 
+        left: position.x,
+        background: 'rgba(12, 13, 18, 0.93)',
+        borderRadius: '8px',
+        minWidth: '180px',
+        padding: '3px'
+      }}
       onContextMenu={(e) => e.preventDefault()}
     >
       {items.map((item, idx) => {
         if (item.divider) {
-          return <div key={`div-${idx}`} className="h-px bg-white/10 my-1 mx-2" />;
+          return <div key={`div-${idx}`} className="h-px bg-white/5 my-1 mx-2" />;
         }
 
         const IconComponent = item.icon ? (Icons as any)[item.icon] : null;
@@ -87,9 +93,11 @@ const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y:
             key={item.id}
             disabled={item.disabled}
             className={clsx(
-              "flex items-center gap-3 px-3 py-1.5 text-sm mx-1 rounded text-left transition-colors",
-              item.disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-accent hover:text-white cursor-pointer",
-              item.danger && !item.disabled ? "hover:bg-error text-error" : "text-nova-text"
+              "flex items-center gap-3 px-2.5 py-1.5 text-xs mx-1 rounded text-left transition-all duration-150 cursor-pointer font-normal tracking-wide",
+              item.disabled 
+                ? "opacity-30 cursor-not-allowed" 
+                : "hover:bg-accent-dim/35 hover:text-white hover:translate-x-[1px] active:scale-[0.98]",
+              item.danger && !item.disabled ? "hover:bg-error/20 text-error" : "text-white/80 hover:text-white"
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -99,9 +107,9 @@ const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y:
               }
             }}
           >
-            {IconComponent && <IconComponent size={14} />}
+            {IconComponent && <IconComponent size={13} className="text-white/60 group-hover:text-white" strokeWidth={1.5} />}
             <span className="flex-1">{item.label}</span>
-            {item.shortcut && <span className="text-xs opacity-50 ml-4">{item.shortcut}</span>}
+            {item.shortcut && <span className="text-[10px] opacity-40 ml-4">{item.shortcut}</span>}
           </button>
         );
       })}
