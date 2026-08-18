@@ -14,11 +14,11 @@ interface DesktopStore {
 }
 
 const DEFAULT_DESKTOP_ICONS: DesktopIcon[] = [
-  { id: 'di-trash', appId: 'trash', label: 'Trash', icon: 'Trash2', x: 24, y: 24 },
-  { id: 'di-terminal', appId: 'terminal', label: 'Terminal', icon: 'TerminalSquare', x: 24, y: 120 },
-  { id: 'di-files', appId: 'file-manager', label: 'Files', icon: 'FolderOpen', x: 24, y: 216 },
-  { id: 'di-editor', appId: 'text-editor', label: 'Editor', icon: 'FileCode2', x: 24, y: 312 },
-  { id: 'di-settings', appId: 'settings', label: 'Settings', icon: 'Settings', x: 24, y: 408 },
+  { id: 'di-trash', appId: 'trash', label: 'Trash', icon: 'Trash2', x: 32, y: 32 },
+  { id: 'di-terminal', appId: 'terminal', label: 'Terminal', icon: 'TerminalSquare', x: 32, y: 136 },
+  { id: 'di-files', appId: 'file-manager', label: 'Files', icon: 'FolderOpen', x: 32, y: 240 },
+  { id: 'di-editor', appId: 'text-editor', label: 'Editor', icon: 'FileCode2', x: 32, y: 344 },
+  { id: 'di-settings', appId: 'settings', label: 'Settings', icon: 'Settings', x: 32, y: 448 },
 ];
 
 export const useDesktopStore = create<DesktopStore>()(
@@ -51,6 +51,34 @@ export const useDesktopStore = create<DesktopStore>()(
     }),
     {
       name: 'nova-desktop',
+      // If client already has persisted data with old coordinates (24, 120, etc.), migrate them!
+      migrate: (persistedState: any, version: number) => {
+        if (persistedState && Array.isArray(persistedState.icons)) {
+          const migratedIcons = persistedState.icons.map((icon: any) => {
+            // Check if coordinates match the old default spacing
+            if (icon.x === 24) {
+              const oldYToNewY: Record<number, number> = {
+                24: 32,
+                120: 136,
+                216: 240,
+                312: 344,
+                408: 448
+              };
+              return {
+                ...icon,
+                x: 32,
+                y: oldYToNewY[icon.y] || icon.y
+              };
+            }
+            return icon;
+          });
+          return {
+            ...persistedState,
+            icons: migratedIcons
+          };
+        }
+        return persistedState;
+      }
     }
   )
 );

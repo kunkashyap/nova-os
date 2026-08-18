@@ -42,14 +42,14 @@ export const Desktop: React.FC = () => {
       <Wallpaper />
       
       {/* Desktop Icons Layer */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-10 pointer-events-none">
         {icons.map((icon) => (
           <DesktopIcon key={icon.id} icon={icon} />
         ))}
       </div>
 
       {/* Window Manager Layer */}
-      <div className="absolute inset-0 z-10 pointer-events-none [&>*]:pointer-events-auto">
+      <div className="absolute inset-0 z-20 pointer-events-none [&>*]:pointer-events-auto">
         <WindowManager />
       </div>
 

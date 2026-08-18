@@ -43,12 +43,11 @@ export const CommandPalette: React.FC = () => {
 
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const search = async () => {
       const q = query.toLowerCase();
       let results: CommandPaletteItem[] = [];
 
-      // Apps
       APP_REGISTRY.forEach(app => {
         if (!q || fuzzySearch(q, app.name.toLowerCase()) || app.keywords?.some(kw => fuzzySearch(q, kw))) {
           results.push({
@@ -62,7 +61,6 @@ export const CommandPalette: React.FC = () => {
         }
       });
 
-      // Files
       const files = await db.nodes.toArray();
       files.forEach(file => {
         if (!file.trashedAt && (fuzzySearch(q, file.name.toLowerCase()))) {
@@ -85,7 +83,6 @@ export const CommandPalette: React.FC = () => {
         }
       });
 
-      // System Commands
       const cmds = [
         { id: 'cmd-reboot', label: 'Reboot NOVA OS', action: reboot },
         { id: 'cmd-settings', label: 'Open Settings', action: () => openWindow('settings') }
@@ -101,7 +98,7 @@ export const CommandPalette: React.FC = () => {
         }
       });
 
-      setItems(results.slice(0, 10)); // Limit to top 10
+      setItems(results.slice(0, 10));
       setSelectedIndex(0);
     };
 
@@ -127,47 +124,109 @@ export const CommandPalette: React.FC = () => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100000] flex items-start justify-center pt-[15vh] pointer-events-auto">
+        <div className="fixed inset-0 z-[100000] flex items-start justify-center pointer-events-auto" style={{ paddingTop: '14vh' }}>
           {/* Backdrop */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            transition={{ duration: 0.15 }}
+            className="absolute inset-0"
+            style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
             onClick={() => setIsOpen(false)}
           />
 
           {/* Palette */}
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative w-full max-w-2xl bg-nova-surface-2 rounded-xl shadow-panel border border-nova-border overflow-hidden flex flex-col"
+            exit={{ opacity: 0, y: -12, scale: 0.97 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="relative overflow-hidden flex flex-col"
+            style={{
+              width: '100%',
+              maxWidth: '560px',
+              borderRadius: '14px',
+              background: 'rgba(12,12,12,0.97)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.70), 0 8px 24px rgba(0,0,0,0.45)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+            }}
           >
-            {/* Input */}
-            <div className="flex items-center px-4 border-b border-nova-border">
-              <Icons.Search className="text-accent mr-3" size={20} />
+            {/* Search input */}
+            <div
+              className="flex items-center"
+              style={{
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                padding: '0 16px',
+                gap: '12px',
+              }}
+            >
+              <Icons.Search
+                size={15}
+                strokeWidth={1.5}
+                style={{ color: 'rgba(255,255,255,0.28)', flexShrink: 0 }}
+              />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search apps, files, or commands..."
-                className="w-full bg-transparent py-4 text-lg text-nova-text focus:outline-none placeholder:text-nova-text-dim"
+                className="text-select"
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  color: 'rgba(255,255,255,0.80)',
+                  padding: '16px 0',
+                  caretColor: 'rgba(255,255,255,0.70)',
+                }}
               />
-              <div className="flex items-center gap-1 text-xs text-nova-text-dim bg-black/30 px-2 py-1 rounded">
-                <span>esc</span>
-              </div>
+              <kbd
+                style={{
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  fontSize: '10px',
+                  fontWeight: 400,
+                  color: 'rgba(255,255,255,0.22)',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: '4px',
+                  padding: '2px 6px',
+                  flexShrink: 0,
+                }}
+              >
+                esc
+              </kbd>
             </div>
 
             {/* Results */}
-            <div className="max-h-[60vh] overflow-y-auto py-2">
+            <div className="overflow-y-auto" style={{ maxHeight: '55vh', padding: '4px' }}>
               {items.length === 0 ? (
-                <div className="py-8 text-center text-nova-text-dim">No results found</div>
+                <div
+                  className="flex flex-col items-center justify-center"
+                  style={{ padding: '28px 16px', gap: '8px' }}
+                >
+                  <Icons.Search size={18} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.15)' }} />
+                  <span
+                    style={{
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.22)',
+                    }}
+                  >
+                    No results
+                  </span>
+                </div>
               ) : (
                 items.map((item, idx) => {
                   const Icon = (Icons as any)[item.icon || 'File'];
+                  const isSelected = idx === selectedIndex;
                   return (
                     <button
                       key={item.id}
@@ -176,26 +235,74 @@ export const CommandPalette: React.FC = () => {
                         setIsOpen(false);
                       }}
                       onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`w-full flex items-center px-4 py-3 gap-4 text-left transition-colors ${
-                        idx === selectedIndex ? 'bg-accent/20 border-l-2 border-accent' : 'border-l-2 border-transparent hover:bg-white/5'
-                      }`}
+                      className="w-full flex items-center gap-3 text-left transition-colors duration-75 cursor-pointer"
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        background: isSelected ? 'rgba(255,255,255,0.07)' : 'transparent',
+                        border: 'none',
+                        borderLeft: `2px solid ${isSelected ? 'rgba(255,255,255,0.22)' : 'transparent'}`,
+                      }}
                     >
-                      <div className={`w-8 h-8 rounded flex items-center justify-center ${
-                        idx === selectedIndex ? 'bg-accent text-white' : 'bg-nova-surface-3 text-nova-text-dim'
-                      }`}>
-                        {Icon && <Icon size={16} />}
+                      <div
+                        style={{
+                          width: '30px',
+                          height: '30px',
+                          borderRadius: '7px',
+                          background: isSelected ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {Icon && (
+                          <Icon
+                            size={14}
+                            strokeWidth={1.5}
+                            style={{ color: isSelected ? 'rgba(255,255,255,0.80)' : 'rgba(255,255,255,0.40)' }}
+                          />
+                        )}
                       </div>
-                      <div className="flex-1 flex flex-col">
-                        <span className={`text-sm font-medium ${idx === selectedIndex ? 'text-white' : 'text-nova-text'}`}>
+
+                      <div className="flex flex-col flex-1 min-w-0" style={{ gap: '1px' }}>
+                        <span
+                          style={{
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            fontSize: '13px',
+                            fontWeight: 400,
+                            color: isSelected ? 'rgba(255,255,255,0.90)' : 'rgba(255,255,255,0.65)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {item.label}
                         </span>
-                        <span className="text-xs text-nova-text-dim">
+                        <span
+                          style={{
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            fontSize: '11px',
+                            fontWeight: 400,
+                            color: 'rgba(255,255,255,0.25)',
+                          }}
+                        >
                           {item.description}
                         </span>
                       </div>
-                      {idx === selectedIndex && (
-                        <div className="text-xs text-accent mr-2 flex items-center gap-1">
-                          <Icons.CornerDownLeft size={14} /> Enter
+
+                      {isSelected && (
+                        <div
+                          className="flex items-center gap-1 flex-shrink-0"
+                          style={{
+                            color: 'rgba(255,255,255,0.28)',
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            fontSize: '10px',
+                          }}
+                        >
+                          <Icons.CornerDownLeft size={11} strokeWidth={1.5} />
+                          <span>enter</span>
                         </div>
                       )}
                     </button>

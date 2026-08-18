@@ -24,9 +24,8 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({ icon }) => {
       selectIcon(icon.id);
     },
     onDragEnd: (pos) => {
-      // Snap to grid (roughly)
-      const gridX = Math.round(pos.x / 80) * 80 + 24;
-      const gridY = Math.round(pos.y / 96) * 96 + 24;
+      const gridX = Math.round((pos.x - 32) / 80) * 80 + 32;
+      const gridY = Math.round((pos.y - 32) / 104) * 104 + 32;
       updateIconPosition(icon.id, gridX, gridY);
     }
   });
@@ -39,41 +38,39 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({ icon }) => {
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    e.stopPropagation(); // prevent desktop from clearing selection
+    e.stopPropagation();
     startDrag(e);
   };
 
   return (
     <div
       ref={ref}
-      className={clsx(
-        "absolute flex flex-col items-center justify-center w-[74px] h-[86px] p-2 rounded-xl border transition-all duration-200 ease-out pointer-events-auto select-none group",
-        isSelected 
-          ? "bg-accent-dim/40 border-accent/25 shadow-glow-accent/10" 
-          : "bg-transparent border-transparent hover:bg-white/[0.03] hover:border-white/[0.05] hover:-translate-y-[2px]"
-      )}
+      className="absolute flex flex-col items-center justify-start w-[76px] pointer-events-auto select-none group cursor-pointer"
       style={{ left: position.x, top: position.y }}
       onPointerDown={handlePointerDown}
       onDoubleClick={handleDoubleClick}
     >
-      {/* Icon Wrapper */}
-      <div className="relative w-11 h-11 flex items-center justify-center text-white/90 group-hover:text-white mb-2 transition-colors">
-        <IconComponent size={28} strokeWidth={1.25} />
-        
-        {/* Subtle dot at corner for selected state */}
-        {isSelected && (
-          <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-accent-light shadow-glow-accent" />
+      {/* Icon container — monochrome states */}
+      <div
+        className={clsx(
+          "w-[56px] h-[56px] rounded-[10px] flex items-center justify-center border transition-all duration-150 ease-out",
+          isSelected
+            ? "bg-[#282828] border-white/[0.18] text-white shadow-[0_4px_12px_rgba(0,0,0,0.40)]"
+            : "bg-[#111111] border-white/[0.06] text-white/60 group-hover:bg-[#1A1A1A] group-hover:border-white/[0.10] group-hover:text-white/90 group-hover:-translate-y-[1px]"
         )}
+      >
+        <IconComponent size={22} strokeWidth={1.5} />
       </div>
 
-      {/* Icon Label */}
-      <span 
+      {/* Label */}
+      <span
         className={clsx(
-          "text-[11px] text-center w-full truncate px-1 tracking-wide transition-all select-none font-normal",
-          isSelected ? "text-white font-medium" : "text-white/80 group-hover:text-white"
+          "mt-[7px] text-[11.5px] tracking-normal text-center w-full truncate px-1 transition-colors select-none font-normal",
+          isSelected ? "text-white" : "text-white/65 group-hover:text-white/90"
         )}
         style={{
-          textShadow: '0 1px 3px rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.5)'
+          textShadow: '0 1px 4px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.70)',
+          lineHeight: 1.2,
         }}
       >
         {icon.label}

@@ -14,12 +14,12 @@ export const App: React.FC = () => {
   const { initialize } = useFileSystemStore();
 
   useEffect(() => {
-    // Apply accent color to document root
-    document.documentElement.dataset.accent = settings.accentColor;
+    // VOID: accent always resolves to monochrome regardless of stored value
+    // Keep the data-accent attribute for backward compat, but CSS ignores it
+    document.documentElement.dataset.accent = settings.accentColor || 'void';
   }, [settings.accentColor]);
 
   useEffect(() => {
-    // Initialize VFS on load
     initialize();
   }, [initialize]);
 
@@ -32,9 +32,9 @@ export const App: React.FC = () => {
 
   return (
     <ContextMenuProvider>
-      <div className="w-full h-full overflow-hidden bg-black text-white selection:bg-accent-dim selection:text-white">
-        {phase === 'boot' && <BootSequence />}
-        {phase === 'login' && <LoginScreen />}
+      <div className="w-full h-full overflow-hidden" style={{ background: '#050505', color: 'rgba(255,255,255,0.80)' }}>
+        {phase === 'boot'    && <BootSequence />}
+        {phase === 'login'   && <LoginScreen />}
         {phase === 'desktop' && (
           <>
             <Desktop />

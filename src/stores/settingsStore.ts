@@ -10,8 +10,8 @@ interface SettingsStore {
 
 const DEFAULT_SETTINGS: OSSettings = {
   username: 'nova',
-  wallpaper: 'aurora',
-  accentColor: 'violet',
+  wallpaper: 'void' as WallpaperVariant,
+  accentColor: 'void' as AccentColor,
   windowTransparency: true,
   animationIntensity: 'full',
   iconSize: 'medium',
@@ -34,7 +34,9 @@ export const useSettingsStore = create<SettingsStore>()(
   )
 );
 
-export const ACCENT_COLORS: Record<AccentColor, { label: string; value: string }> = {
+// VOID: accent colors hidden from UI but kept for compat
+export const ACCENT_COLORS: Record<string, { label: string; value: string }> = {
+  void:    { label: 'Void',    value: '#F5F5F5' },
   violet:  { label: 'Violet',  value: '#7c3aed' },
   indigo:  { label: 'Indigo',  value: '#4f46e5' },
   cyan:    { label: 'Cyan',    value: '#0891b2' },
@@ -43,10 +45,16 @@ export const ACCENT_COLORS: Record<AccentColor, { label: string; value: string }
   rose:    { label: 'Rose',    value: '#e11d48' },
 };
 
-export const WALLPAPER_OPTIONS: Record<WallpaperVariant, string> = {
-  aurora:    'Aurora Borealis',
-  nebula:    'Deep Nebula',
-  matrix:    'Digital Rain',
+// VOID wallpaper option labels
+export const WALLPAPER_OPTIONS: Record<string, string> = {
+  void:      'Void',
+  grain:     'Grain',
+  depth:     'Depth',
   geometric: 'Geometric',
-  minimal:   'Minimal Dark',
+  flat:      'Flat',
+  // Legacy aliases preserved for persisted settings
+  aurora:    'Void',
+  nebula:    'Grain',
+  matrix:    'Depth',
+  minimal:   'Flat',
 };

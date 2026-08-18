@@ -2,11 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { useFileSystemStore } from '@/stores/fsStore';
 import * as Icons from 'lucide-react';
-import { useWindowStore } from '@/stores/windowStore';
 
 export const TextEditorApp: React.FC<{ payload?: { path?: string } }> = ({ payload }) => {
   const { getNode, updateFileContent } = useFileSystemStore();
-  const { updateWindowRect } = useWindowStore(); // Just to access windows state indirectly if needed, but not strictly required
   const [content, setContent] = useState('');
   const [fileName, setFileName] = useState('Untitled.txt');
   const [isModified, setIsModified] = useState(false);
@@ -36,8 +34,6 @@ export const TextEditorApp: React.FC<{ payload?: { path?: string } }> = ({ paylo
       await updateFileContent(fileId, content);
       setIsModified(false);
     } else {
-      // In a full implementation, this would trigger a "Save As" file picker dialogue
-      // For now, we'll just alert that a Save As feature is needed for untitled files
       alert('Save As feature coming soon for new files!');
     }
   };
@@ -53,28 +49,90 @@ export const TextEditorApp: React.FC<{ payload?: { path?: string } }> = ({ paylo
   };
 
   if (isLoading) {
-    return <div className="w-full h-full flex items-center justify-center bg-nova-surface"><Icons.Loader2 className="animate-spin text-nova-text-dim" /></div>;
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center"
+        style={{ background: '#111111' }}
+      >
+        <Icons.Loader2
+          size={18}
+          strokeWidth={1.5}
+          className="animate-void-spin"
+          style={{ color: 'rgba(255,255,255,0.25)' }}
+        />
+      </div>
+    );
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-nova-surface">
-      {/* Menu Bar */}
-      <div className="h-10 border-b border-nova-border flex items-center px-2 gap-2 bg-nova-surface-2 flex-shrink-0">
-        <button 
+    <div className="w-full h-full flex flex-col" style={{ background: '#111111' }}>
+      {/* Toolbar */}
+      <div
+        className="flex items-center gap-2 flex-shrink-0"
+        style={{
+          height: '40px',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: '#0D0D0D',
+          padding: '0 10px',
+        }}
+      >
+        <button
           onClick={handleSave}
-          className="flex items-center gap-2 px-3 py-1.5 rounded hover:bg-white/10 text-sm text-nova-text transition-colors"
+          className="flex items-center gap-[6px] transition-colors duration-100 cursor-pointer"
+          style={{
+            padding: '4px 10px',
+            borderRadius: '6px',
+            background: 'transparent',
+            border: '1px solid transparent',
+            color: 'rgba(255,255,255,0.50)',
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '12px',
+            fontWeight: 400,
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)';
+            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
+            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.80)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.background = 'transparent';
+            (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
+            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.50)';
+          }}
         >
-          <Icons.Save size={14} />
+          <Icons.Save size={12} strokeWidth={1.5} />
           <span>Save</span>
         </button>
-        <div className="w-px h-4 bg-white/10 mx-1" />
-        <span className="text-xs text-nova-text-dim flex-1 text-center pr-12 pointer-events-none">
-          {fileName} {isModified ? '•' : ''}
+
+        <div
+          style={{
+            width: '1px',
+            height: '14px',
+            background: 'rgba(255,255,255,0.07)',
+            flexShrink: 0,
+          }}
+        />
+
+        {/* File name + modified indicator */}
+        <span
+          className="flex-1 text-center pointer-events-none select-none truncate"
+          style={{
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontSize: '11.5px',
+            fontWeight: 400,
+            color: 'rgba(255,255,255,0.35)',
+            paddingRight: '48px',
+          }}
+        >
+          {fileName}
+          {isModified && (
+            <span style={{ marginLeft: '5px', color: 'rgba(255,255,255,0.25)' }}>·</span>
+          )}
         </span>
       </div>
 
-      {/* Editor */}
-      <div className="flex-1 w-full bg-nova-surface relative">
+      {/* Monaco Editor */}
+      <div className="flex-1 w-full relative" style={{ background: '#0A0A0A' }}>
         <Editor
           theme="vs-dark"
           language={getLanguage(fileName)}
@@ -85,14 +143,33 @@ export const TextEditorApp: React.FC<{ payload?: { path?: string } }> = ({ paylo
           }}
           options={{
             minimap: { enabled: false },
-            fontSize: 14,
+            fontSize: 13,
+            lineHeight: 22,
             fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
             wordWrap: 'on',
-            padding: { top: 16 },
+            padding: { top: 16, bottom: 16 },
             scrollBeyondLastLine: false,
             smoothScrolling: true,
+            cursorBlinking: 'smooth',
+            cursorStyle: 'line',
+            renderLineHighlight: 'none',
+            overviewRulerLanes: 0,
+            hideCursorInOverviewRuler: true,
+            scrollbar: {
+              verticalScrollbarSize: 4,
+              horizontalScrollbarSize: 4,
+            },
           }}
-          loading={<Icons.Loader2 className="animate-spin text-nova-text-dim absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+          loading={
+            <div className="w-full h-full flex items-center justify-center" style={{ background: '#0A0A0A' }}>
+              <Icons.Loader2
+                size={18}
+                strokeWidth={1.5}
+                className="animate-void-spin"
+                style={{ color: 'rgba(255,255,255,0.20)' }}
+              />
+            </div>
+          }
         />
       </div>
     </div>

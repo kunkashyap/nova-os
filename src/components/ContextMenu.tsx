@@ -27,13 +27,12 @@ export const ContextMenuProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const showMenu = (e: React.MouseEvent, newItems: ContextMenuItem[]) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    // Ensure menu stays within viewport
+
     let x = e.clientX;
     let y = e.clientY;
-    
-    const menuHeight = newItems.length * 32;
-    const menuWidth = 190;
+
+    const menuHeight = newItems.length * 30 + 12;
+    const menuWidth = 196;
 
     if (x + menuWidth > window.innerWidth) x -= menuWidth;
     if (y + menuHeight > window.innerHeight) y -= menuHeight;
@@ -49,41 +48,51 @@ export const ContextMenuProvider: React.FC<{ children: React.ReactNode }> = ({ c
     <ContextMenuContext.Provider value={{ showMenu, hideMenu }}>
       {children}
       {isOpen && (
-        <ContextMenu 
-          items={items} 
-          position={position} 
-          onClose={hideMenu} 
+        <VoidContextMenu
+          items={items}
+          position={position}
+          onClose={hideMenu}
         />
       )}
     </ContextMenuContext.Provider>
   );
 };
 
-const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y: number}, onClose: () => void }> = ({ items, position, onClose }) => {
+const VoidContextMenu: React.FC<{
+  items: ContextMenuItem[];
+  position: { x: number; y: number };
+  onClose: () => void;
+}> = ({ items, position, onClose }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   useClickOutside(ref, onClose);
 
   return createPortal(
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.96, y: -4 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.12, ease: "easeOut" }}
-      className="context-menu flex flex-col py-1 shadow-dropdown border border-white/[0.06] backdrop-blur-3xl"
-      style={{ 
-        top: position.y, 
+      transition={{ duration: 0.10, ease: 'easeOut' }}
+      className="context-menu"
+      style={{
+        top: position.y,
         left: position.x,
-        background: 'rgba(12, 13, 18, 0.93)',
-        borderRadius: '8px',
-        minWidth: '180px',
-        padding: '3px'
+        position: 'fixed',
       }}
       onContextMenu={(e) => e.preventDefault()}
     >
       {items.map((item, idx) => {
         if (item.divider) {
-          return <div key={`div-${idx}`} className="h-px bg-white/5 my-1 mx-2" />;
+          return (
+            <div
+              key={`div-${idx}`}
+              style={{
+                height: '1px',
+                background: 'rgba(255,255,255,0.05)',
+                margin: '3px 6px',
+              }}
+            />
+          );
         }
 
         const IconComponent = item.icon ? (Icons as any)[item.icon] : null;
@@ -93,12 +102,38 @@ const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y:
             key={item.id}
             disabled={item.disabled}
             className={clsx(
-              "flex items-center gap-3 px-2.5 py-1.5 text-xs mx-1 rounded text-left transition-all duration-150 cursor-pointer font-normal tracking-wide",
-              item.disabled 
-                ? "opacity-30 cursor-not-allowed" 
-                : "hover:bg-accent-dim/35 hover:text-white hover:translate-x-[1px] active:scale-[0.98]",
-              item.danger && !item.disabled ? "hover:bg-error/20 text-error" : "text-white/80 hover:text-white"
+              "flex items-center gap-[10px] w-full text-left transition-colors duration-100 cursor-pointer",
+              item.disabled && "opacity-25 cursor-not-allowed"
             )}
+            style={{
+              padding: '6px 10px',
+              margin: '1px 2px',
+              borderRadius: '5px',
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: '12px',
+              fontWeight: 400,
+              color: item.danger && !item.disabled
+                ? 'rgba(239,68,68,0.80)'
+                : 'rgba(255,255,255,0.70)',
+              background: 'transparent',
+              border: 'none',
+            }}
+            onMouseEnter={e => {
+              if (!item.disabled) {
+                (e.currentTarget as HTMLElement).style.background = item.danger
+                  ? 'rgba(239,68,68,0.08)'
+                  : 'rgba(255,255,255,0.07)';
+                (e.currentTarget as HTMLElement).style.color = item.danger
+                  ? 'rgba(239,68,68,1)'
+                  : 'rgba(255,255,255,0.90)';
+              }
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = 'transparent';
+              (e.currentTarget as HTMLElement).style.color = item.danger && !item.disabled
+                ? 'rgba(239,68,68,0.80)'
+                : 'rgba(255,255,255,0.70)';
+            }}
             onClick={(e) => {
               e.stopPropagation();
               if (!item.disabled && item.action) {
@@ -107,9 +142,26 @@ const ContextMenu: React.FC<{ items: ContextMenuItem[], position: {x: number, y:
               }
             }}
           >
-            {IconComponent && <IconComponent size={13} className="text-white/60 group-hover:text-white" strokeWidth={1.5} />}
+            {IconComponent && (
+              <IconComponent
+                size={12}
+                strokeWidth={1.5}
+                style={{ flexShrink: 0, color: 'inherit' }}
+              />
+            )}
             <span className="flex-1">{item.label}</span>
-            {item.shortcut && <span className="text-[10px] opacity-40 ml-4">{item.shortcut}</span>}
+            {item.shortcut && (
+              <span
+                style={{
+                  fontSize: '10px',
+                  color: 'rgba(255,255,255,0.22)',
+                  marginLeft: '12px',
+                  flexShrink: 0,
+                }}
+              >
+                {item.shortcut}
+              </span>
+            )}
           </button>
         );
       })}

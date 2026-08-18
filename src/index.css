@@ -1,66 +1,88 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════
-   NOVA OS — Global CSS & Design System
+   NOVA // VOID — Global Design System
+   Monochrome. Structured. Purposeful.
    ══════════════════════════════════════════════════ */
 
 @theme {
-  /* ─── Color Tokens ─────────────────────────────── */
-  --color-nova-black:      #050507;
-  --color-nova-dark:       #0a0b0f;
-  --color-nova-darker:     #0d0e14;
-  --color-nova-surface:    #12141c;
-  --color-nova-surface-2:  #181a24;
-  --color-nova-surface-3:  #1e2030;
+  /* ─── VOID Color Scale ──────────────────────────── */
+  --color-void-950:    #050505;
+  --color-void-900:    #080808;
+  --color-void-850:    #0D0D0D;
+  --color-void-800:    #111111;
+  --color-void-750:    #151515;
+  --color-void-700:    #1A1A1A;
+  --color-void-650:    #202020;
+  --color-void-600:    #282828;
+  --color-void-500:    #383838;
+  --color-void-400:    #525252;
+  --color-void-300:    #737373;
+  --color-void-200:    #A3A3A3;
+  --color-void-100:    #D4D4D4;
+  --color-void-50:     #F5F5F5;
+  --color-void-white:  #FFFFFF;
+
+  /* ─── Semantic aliases (keep old names for compat) ─ */
+  --color-nova-black:      #050505;
+  --color-nova-dark:       #080808;
+  --color-nova-darker:     #0D0D0D;
+  --color-nova-surface:    #1A1A1A;
+  --color-nova-surface-2:  #111111;
+  --color-nova-surface-3:  #202020;
   --color-nova-border:     rgba(255, 255, 255, 0.06);
   --color-nova-border-2:   rgba(255, 255, 255, 0.10);
   --color-nova-muted:      rgba(255, 255, 255, 0.35);
   --color-nova-text:       rgba(255, 255, 255, 0.90);
-  --color-nova-text-dim:   rgba(255, 255, 255, 0.55);
+  --color-nova-text-dim:   rgba(255, 255, 255, 0.45);
 
-  /* Accent — Violet (default, overridden by JS) */
-  --color-accent:          #7c3aed;
-  --color-accent-light:    #8b5cf6;
-  --color-accent-dim:      rgba(124, 58, 237, 0.15);
-  --color-accent-glow:     rgba(124, 58, 237, 0.35);
+  /* ─── Accent — VOID monochrome (replaces violet) ── */
+  --color-accent:          rgba(255, 255, 255, 0.85);
+  --color-accent-light:    rgba(255, 255, 255, 1.00);
+  --color-accent-dim:      rgba(255, 255, 255, 0.08);
+  --color-accent-glow:     rgba(255, 255, 255, 0.08);
 
-  /* Status */
+  /* ─── Semantic States ───────────────────────────── */
   --color-success:         #22c55e;
   --color-warning:         #f59e0b;
   --color-error:           #ef4444;
-  --color-info:            #3b82f6;
+  --color-info:            #A3A3A3;
 
-  /* ─── Typography ───────────────────────────────── */
-  --font-sans:   'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+  /* ─── Typography ────────────────────────────────── */
+  --font-sans:   'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:   'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
-  /* ─── Shadows ──────────────────────────────────── */
-  --shadow-window: 0 32px 80px rgba(0,0,0,0.65), 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
-  --shadow-window-focus: 0 32px 80px rgba(0,0,0,0.75), 0 8px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.25);
-  --shadow-taskbar: 0 -1px 0 rgba(255,255,255,0.05), 0 -8px 32px rgba(0,0,0,0.4);
-  --shadow-panel:   0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.07);
-  --shadow-dropdown: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
-  --shadow-notification: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
-  --shadow-glow-accent: 0 0 20px var(--color-accent-glow);
+  /* ─── Shadows ───────────────────────────────────── */
+  --shadow-window:       0 24px 60px rgba(0,0,0,0.50), 0 8px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+  --shadow-window-focus: 0 24px 60px rgba(0,0,0,0.60), 0 8px 20px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.10);
+  --shadow-taskbar:      0 -1px 0 rgba(255,255,255,0.04), 0 -8px 32px rgba(0,0,0,0.40);
+  --shadow-panel:        0 12px 30px rgba(0,0,0,0.50), 0 0 0 1px rgba(255,255,255,0.07);
+  --shadow-dropdown:     0 8px 24px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+  --shadow-notification: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+  --shadow-glow-accent:  none;
 
-  /* ─── Border Radii ─────────────────────────────── */
+  /* ─── Border Radii ──────────────────────────────── */
   --radius-window: 12px;
   --radius-panel:  10px;
   --radius-card:   8px;
   --radius-btn:    6px;
   --radius-sm:     4px;
 
-  /* ─── Spacing Scale ────────────────────────────── */
+  /* ─── Spacing ───────────────────────────────────── */
   --spacing-taskbar-height: 52px;
 
-  /* ─── Animation ────────────────────────────────── */
-  --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* ─── Motion ────────────────────────────────────── */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:       cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* legacy spring kept for framer-motion compat */
+  --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.10);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
   --duration-fast:   120ms;
-  --duration-base:   200ms;
-  --duration-slow:   350ms;
-  --duration-page:   500ms;
+  --duration-base:   180ms;
+  --duration-slow:   280ms;
+  --duration-page:   400ms;
 }
 
 /* ──────────────────────────────────────────────────
@@ -81,60 +103,62 @@ html, body, #root {
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-nova-black);
-  color: var(--color-nova-text);
+  background: var(--color-void-950);
+  color: var(--color-void-100);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ──────────────────────────────────────────────────
-   Scrollbar Styling
+   Scrollbar
 ────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
-  border-radius: 3px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
 }
 
 /* ──────────────────────────────────────────────────
    Selection
 ────────────────────────────────────────────────── */
 ::selection {
-  background: var(--color-accent-dim);
-  color: var(--color-nova-text);
+  background: rgba(255,255,255,0.12);
+  color: #ffffff;
 }
 
 /* ──────────────────────────────────────────────────
-   Glassmorphism Utilities
+   VOID Surface Utilities
 ────────────────────────────────────────────────── */
+
+/* Base panel surface — graphite with backdrop */
 .glass {
-  background: rgba(18, 20, 28, 0.82);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--color-nova-border);
+  background: rgba(17, 17, 17, 0.92);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .glass-light {
-  background: rgba(30, 32, 48, 0.70);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid var(--color-nova-border-2);
+  background: rgba(26, 26, 26, 0.85);
+  backdrop-filter: blur(20px) saturate(110%);
+  -webkit-backdrop-filter: blur(20px) saturate(110%);
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 .glass-heavy {
-  background: rgba(10, 11, 15, 0.92);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid var(--color-nova-border);
+  background: rgba(12, 12, 12, 0.94);
+  backdrop-filter: blur(32px) saturate(100%);
+  -webkit-backdrop-filter: blur(32px) saturate(100%);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 /* ──────────────────────────────────────────────────
@@ -143,43 +167,15 @@ body {
 .font-mono { font-family: var(--font-mono); }
 
 /* ──────────────────────────────────────────────────
-   Accent Color Overrides (set by Settings store)
+   Accent Color (VOID — always monochrome)
+   data-accent preserved for backward compat but all
+   variants resolve to the same monochrome scale.
 ────────────────────────────────────────────────── */
-[data-accent="violet"] {
-  --color-accent: #7c3aed;
-  --color-accent-light: #8b5cf6;
-  --color-accent-dim: rgba(124, 58, 237, 0.15);
-  --color-accent-glow: rgba(124, 58, 237, 0.35);
-}
-[data-accent="indigo"] {
-  --color-accent: #4f46e5;
-  --color-accent-light: #6366f1;
-  --color-accent-dim: rgba(79, 70, 229, 0.15);
-  --color-accent-glow: rgba(79, 70, 229, 0.35);
-}
-[data-accent="cyan"] {
-  --color-accent: #0891b2;
-  --color-accent-light: #06b6d4;
-  --color-accent-dim: rgba(8, 145, 178, 0.15);
-  --color-accent-glow: rgba(8, 145, 178, 0.35);
-}
-[data-accent="blue"] {
-  --color-accent: #2563eb;
-  --color-accent-light: #3b82f6;
-  --color-accent-dim: rgba(37, 99, 235, 0.15);
-  --color-accent-glow: rgba(37, 99, 235, 0.35);
-}
-[data-accent="emerald"] {
-  --color-accent: #059669;
-  --color-accent-light: #10b981;
-  --color-accent-dim: rgba(5, 150, 105, 0.15);
-  --color-accent-glow: rgba(5, 150, 105, 0.35);
-}
-[data-accent="rose"] {
-  --color-accent: #e11d48;
-  --color-accent-light: #f43f5e;
-  --color-accent-dim: rgba(225, 29, 72, 0.15);
-  --color-accent-glow: rgba(225, 29, 72, 0.35);
+[data-accent] {
+  --color-accent:       rgba(255, 255, 255, 0.85);
+  --color-accent-light: rgba(255, 255, 255, 1.00);
+  --color-accent-dim:   rgba(255, 255, 255, 0.08);
+  --color-accent-glow:  rgba(255, 255, 255, 0.06);
 }
 
 /* ──────────────────────────────────────────────────
@@ -192,14 +188,14 @@ body {
   border-radius: var(--radius-window);
   box-shadow: var(--shadow-window);
   overflow: hidden;
-  background: var(--color-nova-surface);
-  border: 1px solid var(--color-nova-border);
+  background: #1A1A1A;
+  border: 1px solid rgba(255,255,255,0.06);
   transition: box-shadow var(--duration-base) ease;
 }
 
 .window-base.focused {
   box-shadow: var(--shadow-window-focus);
-  border-color: rgba(124, 58, 237, 0.2);
+  border-color: rgba(255,255,255,0.10);
 }
 
 .window-titlebar {
@@ -207,31 +203,68 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 12px;
+  padding: 0 14px;
   flex-shrink: 0;
   background: rgba(255,255,255,0.025);
-  border-bottom: 1px solid var(--color-nova-border);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   cursor: grab;
   user-select: none;
 }
 
 .window-titlebar:active { cursor: grabbing; }
 
-/* Traffic Light Buttons */
+/* ─── Window Control Buttons (monochrome) ─────── */
+.window-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: rgba(255,255,255,0.12);
+  transition: background var(--duration-fast) ease, transform var(--duration-fast) ease;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.window-control:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.1);
+}
+.window-control:active {
+  background: rgba(255,255,255,0.18);
+  transform: scale(0.95);
+}
+.window-control:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+.window-control:disabled:hover {
+  background: rgba(255,255,255,0.12);
+  transform: none;
+}
+
+/* Legacy traffic-light overrides — force monochrome */
 .traffic-light {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  transition: filter var(--duration-fast) ease, transform var(--duration-fast) ease;
+  background: rgba(255,255,255,0.12) !important;
+  transition: background var(--duration-fast) ease, transform var(--duration-fast) ease;
   position: relative;
   flex-shrink: 0;
 }
-.traffic-light:hover { filter: brightness(1.2); transform: scale(1.1); }
-.traffic-light.close   { background: #ff5f57; }
-.traffic-light.minimize { background: #ffbd2e; }
-.traffic-light.maximize { background: #28ca41; }
+.traffic-light:hover {
+  background: rgba(255,255,255,0.25) !important;
+  filter: none !important;
+  transform: scale(1.1);
+}
+.traffic-light.close    { background: rgba(255,255,255,0.12) !important; }
+.traffic-light.minimize { background: rgba(255,255,255,0.12) !important; }
+.traffic-light.maximize { background: rgba(255,255,255,0.12) !important; }
 
 /* ──────────────────────────────────────────────────
    Resize Handles
@@ -250,7 +283,7 @@ body {
 .resize-handle.w  { top: 8px; left: 0; bottom: 8px; width: 4px; cursor: w-resize; }
 
 /* ──────────────────────────────────────────────────
-   Terminal Styles
+   Terminal
 ────────────────────────────────────────────────── */
 .terminal-container .xterm {
   padding: 12px;
@@ -266,13 +299,13 @@ body {
 .context-menu {
   position: fixed;
   z-index: 99999;
-  min-width: 200px;
-  padding: 4px;
+  min-width: 192px;
+  padding: 3px;
   border-radius: var(--radius-card);
-  background: rgba(18, 20, 28, 0.96);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(15, 15, 15, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
   box-shadow: var(--shadow-dropdown);
 }
 
@@ -281,101 +314,94 @@ body {
 ────────────────────────────────────────────────── */
 .taskbar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--spacing-taskbar-height);
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  height: 58px;
   z-index: 9000;
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 0 8px;
-  background: rgba(8, 9, 13, 0.88);
-  backdrop-filter: blur(32px) saturate(160%);
-  -webkit-backdrop-filter: blur(32px) saturate(160%);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  box-shadow: var(--shadow-taskbar);
+  background: rgba(14, 14, 14, 0.90);
+  backdrop-filter: blur(28px) saturate(100%);
+  -webkit-backdrop-filter: blur(28px) saturate(100%);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .taskbar {
+    bottom: 24px;
+    left: 40px;
+    right: 40px;
+    height: 64px;
+    border-radius: 20px;
+  }
 }
 
 /* ──────────────────────────────────────────────────
    Animations
 ────────────────────────────────────────────────── */
-@keyframes nova-pulse {
-  0%, 100% { opacity: 0.6; }
-  50%       { opacity: 1.0; }
+@keyframes void-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
+@keyframes void-pulse-dots {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+  40%           { opacity: 1.0;  transform: scale(1.0); }
+}
+
+@keyframes void-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Legacy names kept for backward compat */
+@keyframes nova-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
+}
 @keyframes nova-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-
 @keyframes nova-float {
   0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-6px); }
+  50%       { transform: translateY(-4px); }
 }
 
-@keyframes nova-shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.animate-nova-pulse  { animation: nova-pulse 2s ease-in-out infinite; }
+.animate-nova-pulse  { animation: nova-pulse 2.5s ease-in-out infinite; }
 .animate-nova-spin   { animation: nova-spin 1s linear infinite; }
-.animate-nova-float  { animation: nova-float 4s ease-in-out infinite; }
+.animate-void-spin   { animation: void-spin 0.75s linear infinite; }
+
+/* Loading dots */
+.void-dot-1 { animation: void-pulse-dots 1.4s ease-in-out 0.0s infinite; }
+.void-dot-2 { animation: void-pulse-dots 1.4s ease-in-out 0.2s infinite; }
+.void-dot-3 { animation: void-pulse-dots 1.4s ease-in-out 0.4s infinite; }
 
 /* ──────────────────────────────────────────────────
-   Login Screen — Ambient Animations
+   Login Screen — Void Animations
 ────────────────────────────────────────────────── */
 
-/* Slow atmospheric orb drift — 80s cycle, imperceptible unless watched closely */
-@keyframes login-drift-a {
-  0%   { transform: translate(0%, 0%)   scale(1);    opacity: 0.18; }
-  33%  { transform: translate(4%, -3%)  scale(1.06); opacity: 0.22; }
-  66%  { transform: translate(-3%, 5%)  scale(0.96); opacity: 0.16; }
-  100% { transform: translate(0%, 0%)   scale(1);    opacity: 0.18; }
-}
-
-@keyframes login-drift-b {
-  0%   { transform: translate(0%, 0%)   scale(1);    opacity: 0.12; }
-  40%  { transform: translate(-5%, 3%)  scale(1.08); opacity: 0.16; }
-  70%  { transform: translate(3%, -4%)  scale(0.94); opacity: 0.10; }
-  100% { transform: translate(0%, 0%)   scale(1);    opacity: 0.12; }
-}
-
-/* Rotating conic-gradient for avatar border ring */
+/* VOID: no ambient background orbs — these keyframes kept
+   as stubs in case the classes are still referenced */
+@keyframes login-drift-a { 0%, 100% { opacity: 0; } }
+@keyframes login-drift-b { 0%, 100% { opacity: 0; } }
 @keyframes login-ring-rotate {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+@keyframes login-scanline { 0%, 100% { opacity: 0; } }
+@keyframes login-grid-breathe { 0%, 100% { opacity: 0; } }
 
-/* Single scanline sweep on page load */
-@keyframes login-scanline {
-  0%   { transform: translateY(-100%); opacity: 0; }
-  5%   { opacity: 0.06; }
-  95%  { opacity: 0.06; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-
-/* Subtle data-grid pulse */
-@keyframes login-grid-breathe {
-  0%, 100% { opacity: 0.018; }
-  50%       { opacity: 0.032; }
-}
-
-/* Access-granted brightness flash */
-@keyframes login-granted-flash {
-  0%   { opacity: 0; }
-  15%  { opacity: 1; }
-  70%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.animate-login-drift-a    { animation: login-drift-a   80s ease-in-out infinite; }
-.animate-login-drift-b    { animation: login-drift-b   95s ease-in-out infinite; }
-.animate-login-ring       { animation: login-ring-rotate 8s linear infinite; }
-.animate-login-scanline   { animation: login-scanline  4s ease-in-out 0.8s 1 forwards; }
-.animate-login-grid       { animation: login-grid-breathe 6s ease-in-out infinite; }
+.animate-login-drift-a    { animation: none; }
+.animate-login-drift-b    { animation: none; }
+.animate-login-ring       { animation: none; }
+.animate-login-scanline   { animation: none; }
+.animate-login-grid       { animation: none; }
 
 /* ──────────────────────────────────────────────────
    Reduced Motion
@@ -391,18 +417,33 @@ body {
 /* ──────────────────────────────────────────────────
    Misc Utilities
 ────────────────────────────────────────────────── */
-.no-select { user-select: none; }
-.text-select { user-select: text; }
+.no-select    { user-select: none; }
+.text-select  { user-select: text; }
 .cursor-default { cursor: default; }
-.cursor-text { cursor: text; }
+.cursor-text  { cursor: text; }
+
 .fullscreen-overlay {
   position: fixed;
   inset: 0;
   z-index: 99990;
 }
 
-/* Drag-over highlight */
+/* Drag-over highlight (monochrome) */
 .drop-target-active {
-  background: var(--color-accent-dim) !important;
-  border-color: var(--color-accent-light) !important;
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.20) !important;
+}
+
+/* ──────────────────────────────────────────────────
+   VOID Noise Grain — shared texture utility
+────────────────────────────────────────────────── */
+.void-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.90' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
 }

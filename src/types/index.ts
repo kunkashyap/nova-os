@@ -91,8 +91,8 @@ export interface Notification {
 }
 
 // ─── Settings ────────────────────────────────────────────────
-export type WallpaperVariant = 'aurora' | 'nebula' | 'matrix' | 'geometric' | 'minimal';
-export type AccentColor = 'violet' | 'indigo' | 'cyan' | 'blue' | 'emerald' | 'rose';
+export type WallpaperVariant = 'aurora' | 'nebula' | 'matrix' | 'geometric' | 'minimal' | 'void' | 'grain' | 'depth' | 'flat';
+export type AccentColor = 'violet' | 'indigo' | 'cyan' | 'blue' | 'emerald' | 'rose' | 'void';
 export type AnimationIntensity = 'none' | 'reduced' | 'full';
 export type IconSize = 'small' | 'medium' | 'large';
 

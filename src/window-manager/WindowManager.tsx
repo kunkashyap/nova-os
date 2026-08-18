@@ -22,8 +22,27 @@ export const WindowManager: React.FC = () => {
       case 'image-viewer': return <ImageViewerApp payload={payload} />;
       case 'settings': return <SettingsApp />;
       case 'trash': return <TrashApp />;
-      case 'about': return <div className="p-6 text-center">NOVA OS v2.0<br/>By Antigravity</div>;
-      default: return <div className="p-4 text-red-400">App not found: {appId}</div>;
+      case 'about': return (
+        <div
+          className="p-8 flex flex-col items-center justify-center h-full gap-4"
+          style={{ background: '#111111', fontFamily: 'Inter, system-ui, sans-serif' }}
+        >
+          <div style={{ fontSize: '13px', fontWeight: 500, letterSpacing: '0.24em', color: 'rgba(255,255,255,0.70)', textTransform: 'uppercase' }}>
+            NOVA OS
+          </div>
+          <div style={{ fontSize: '11px', letterSpacing: '0.14em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase' }}>
+            VOID · v2.0.0
+          </div>
+        </div>
+      );
+      default: return (
+        <div
+          className="p-4 flex items-center justify-center h-full"
+          style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: '12px', color: 'rgba(255,255,255,0.30)' }}
+        >
+          App not found: {appId}
+        </div>
+      );
     }
   };
 

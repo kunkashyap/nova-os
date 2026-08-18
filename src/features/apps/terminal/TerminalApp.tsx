@@ -12,18 +12,17 @@ export const TerminalApp: React.FC = () => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const term = useRef<Terminal | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
-  
+
   const fsStore = useFileSystemStore();
 
   const currentDir = useRef<string>(ROOT_DIR_ID);
   const currentPathStr = useRef<string>('~');
-  
+
   const currentInput = useRef('');
   const commandHistory = useRef<string[]>([]);
   const historyIndex = useRef(-1);
 
   const initFs = async () => {
-    // Start at Documents by default
     const documents = await fsStore.resolvePath('/Documents');
     if (documents) {
       currentDir.current = documents.id;
@@ -31,9 +30,10 @@ export const TerminalApp: React.FC = () => {
     }
   };
 
+  // VOID monochrome prompt: no green/blue, just white/gray
   const getPrompt = () => {
     const user = useSettingsStore.getState().settings.username;
-    return `\x1b[1;32m${user}@nova\x1b[0m:\x1b[1;34m${currentPathStr.current}\x1b[0m$ `;
+    return `\x1b[0;37m${user}@nova\x1b[0m \x1b[2;37m${currentPathStr.current}\x1b[0m \x1b[0;37m%\x1b[0m `;
   };
 
   const printLine = (text: string) => {
@@ -49,15 +49,35 @@ export const TerminalApp: React.FC = () => {
 
     term.current = new Terminal({
       theme: {
-        background: '#0a0b0f', // nova-dark
-        foreground: '#ffffff',
-        cursor: '#7c3aed', // accent
-        selectionBackground: 'rgba(124, 58, 237, 0.3)',
+        background: '#050505',
+        foreground: '#D4D4D4',
+        cursor: '#F5F5F5',
+        cursorAccent: '#050505',
+        selectionBackground: 'rgba(255,255,255,0.15)',
+        black: '#111111',
+        brightBlack: '#383838',
+        white: '#D4D4D4',
+        brightWhite: '#F5F5F5',
+        red: '#A3A3A3',
+        brightRed: '#D4D4D4',
+        green: '#A3A3A3',
+        brightGreen: '#D4D4D4',
+        yellow: '#C8C8C8',
+        brightYellow: '#E8E8E8',
+        blue: '#A3A3A3',
+        brightBlue: '#D4D4D4',
+        magenta: '#A3A3A3',
+        brightMagenta: '#D4D4D4',
+        cyan: '#C0C0C0',
+        brightCyan: '#E0E0E0',
       },
       fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
-      fontSize: 14,
+      fontSize: 13,
+      lineHeight: 1.5,
       cursorBlink: true,
+      cursorStyle: 'bar',
       scrollback: 1000,
+      allowTransparency: true,
     });
 
     fitAddon.current = new FitAddon();
@@ -65,15 +85,14 @@ export const TerminalApp: React.FC = () => {
     term.current.loadAddon(new WebLinksAddon());
 
     term.current.open(terminalRef.current);
-    
-    // Fit needs a tiny delay to measure correctly in flex containers
+
     setTimeout(() => {
       fitAddon.current?.fit();
     }, 50);
 
     initFs().then(() => {
-      printLine(`NOVA OS v${OS_VERSION} (WebAssembly/V8)`);
-      printLine(`Type 'help' to see available commands.`);
+      printLine(`\x1b[2;37mNOVA OS v${OS_VERSION}\x1b[0m`);
+      printLine(`\x1b[2;37mType 'help' to see available commands.\x1b[0m`);
       printLine('');
       prompt();
     });
@@ -104,7 +123,6 @@ export const TerminalApp: React.FC = () => {
         if (historyIndex.current > 0) {
           historyIndex.current -= 1;
           const histCmd = commandHistory.current[historyIndex.current];
-          // Clear current line
           term.current?.write('\x1b[2K\r');
           term.current?.write(getPrompt() + histCmd);
           currentInput.current = histCmd;
@@ -142,23 +160,28 @@ export const TerminalApp: React.FC = () => {
     if (args.length === 0) return;
 
     const cmd = args[0].toLowerCase();
-    
+
     switch (cmd) {
       case 'help':
-        printLine('Available commands:');
-        printLine('  ls         List directory contents');
-        printLine('  cd         Change directory');
-        printLine('  pwd        Print working directory');
-        printLine('  cat        Print file contents');
-        printLine('  mkdir      Create a new directory');
-        printLine('  touch      Create an empty file');
-        printLine('  rm         Remove a file or directory');
-        printLine('  whoami     Print current user');
-        printLine('  echo       Print text');
-        printLine('  clear, cls Clear terminal');
-        printLine('  date       Print current date and time');
-        printLine('  history    Print command history');
-        printLine('  neofetch   System information');
+        printLine('\x1b[2;37mAvailable commands:\x1b[0m');
+        const cmds = [
+          ['ls',      'List directory contents'],
+          ['cd',      'Change directory'],
+          ['pwd',     'Print working directory'],
+          ['cat',     'Print file contents'],
+          ['mkdir',   'Create a new directory'],
+          ['touch',   'Create an empty file'],
+          ['rm',      'Remove a file or directory'],
+          ['whoami',  'Print current user'],
+          ['echo',    'Print text'],
+          ['clear',   'Clear terminal'],
+          ['date',    'Print current date and time'],
+          ['history', 'Print command history'],
+          ['neofetch','System information'],
+        ];
+        cmds.forEach(([c, d]) => {
+          printLine(`  \x1b[0;37m${c.padEnd(12)}\x1b[0m\x1b[2;37m${d}\x1b[0m`);
+        });
         break;
 
       case 'clear':
@@ -184,18 +207,20 @@ export const TerminalApp: React.FC = () => {
         break;
 
       case 'history':
-        commandHistory.current.forEach((c, i) => printLine(`  ${i + 1}  ${c}`));
+        commandHistory.current.forEach((c, i) => {
+          printLine(`  \x1b[2;37m${String(i + 1).padStart(3)}\x1b[0m  ${c}`);
+        });
         break;
 
       case 'neofetch':
         const user = useSettingsStore.getState().settings.username;
-        printLine(`\x1b[1;36m       .---.\x1b[0m          \x1b[1;32m${user}\x1b[0m@\x1b[1;32mnova\x1b[0m`);
-        printLine(`\x1b[1;36m      /     \\\x1b[0m         -------------`);
-        printLine(`\x1b[1;36m      \\.@-@./\x1b[0m         \x1b[1;33mOS\x1b[0m: NOVA OS v${OS_VERSION}`);
-        printLine(`\x1b[1;36m      /\\_-_/\\\x1b[0m         \x1b[1;33mKernel\x1b[0m: WebAssembly/V8`);
-        printLine(`\x1b[1;36m    //  _  \\\\ \x1b[0m        \x1b[1;33mShell\x1b[0m: nova-sh`);
-        printLine(`\x1b[1;36m   | \\     / |\x1b[0m        \x1b[1;33mResolution\x1b[0m: ${window.innerWidth}x${window.innerHeight}`);
-        printLine(`\x1b[1;36m   \\_\\_'-'_/_/\x1b[0m        \x1b[1;33mTerminal\x1b[0m: xterm.js`);
+        printLine(`\x1b[0;37m       .---.         \x1b[0m  \x1b[1;37m${user}\x1b[0m\x1b[2;37m@nova\x1b[0m`);
+        printLine(`\x1b[0;37m      /     \\        \x1b[0m  \x1b[2;37m──────────────\x1b[0m`);
+        printLine(`\x1b[0;37m      \\.@-@./        \x1b[0m  \x1b[0;37mOS\x1b[0m      \x1b[2;37mNOVA OS v${OS_VERSION} VOID\x1b[0m`);
+        printLine(`\x1b[0;37m      /\\_-_/\\        \x1b[0m  \x1b[0;37mKernel\x1b[0m  \x1b[2;37mWebAssembly/V8\x1b[0m`);
+        printLine(`\x1b[0;37m    //  _  \\\\       \x1b[0m  \x1b[0;37mShell\x1b[0m   \x1b[2;37mnova-sh\x1b[0m`);
+        printLine(`\x1b[0;37m   | \\     / |      \x1b[0m  \x1b[0;37mRes\x1b[0m     \x1b[2;37m${window.innerWidth}x${window.innerHeight}\x1b[0m`);
+        printLine(`\x1b[0;37m   \\_\\_'-'_/_/      \x1b[0m  \x1b[0;37mTerm\x1b[0m    \x1b[2;37mxterm.js\x1b[0m`);
         break;
 
       case 'ls':
@@ -205,12 +230,12 @@ export const TerminalApp: React.FC = () => {
         list.forEach(node => {
           if (node.trashedAt) return;
           if (node.type === 'folder') {
-            out += `\x1b[1;34m${node.name}\x1b[0m  `; // blue for folder
+            out += `\x1b[0;37m${node.name}/\x1b[0m  `;
           } else {
-            out += `${node.name}  `;
+            out += `\x1b[2;37m${node.name}\x1b[0m  `;
           }
         });
-        printLine(out);
+        if (out) printLine(out);
         break;
 
       case 'cd':
@@ -219,7 +244,7 @@ export const TerminalApp: React.FC = () => {
           currentPathStr.current = '~';
           break;
         }
-        
+
         let target = args[1];
         if (target === '~') {
           currentDir.current = ROOT_DIR_ID;
@@ -244,21 +269,18 @@ export const TerminalApp: React.FC = () => {
           currentDir.current = nextFolder.id;
           currentPathStr.current = (await fsStore.getPathString(nextFolder.id)).replace(/^\//, '~/');
         } else {
-          printLine(`cd: ${target}: No such file or directory`);
+          printLine(`\x1b[2;37mcd: ${target}: No such file or directory\x1b[0m`);
         }
         break;
 
       case 'cat':
-        if (args.length < 2) {
-          printLine('cat: missing operand');
-          break;
-        }
+        if (args.length < 2) { printLine('\x1b[2;37mcat: missing operand\x1b[0m'); break; }
         const catNodes = await fsStore.listDirectory(currentDir.current);
         const catFile = catNodes.find(n => n.name === args[1]);
         if (!catFile) {
-          printLine(`cat: ${args[1]}: No such file or directory`);
+          printLine(`\x1b[2;37mcat: ${args[1]}: No such file or directory\x1b[0m`);
         } else if (catFile.type === 'folder') {
-          printLine(`cat: ${args[1]}: Is a directory`);
+          printLine(`\x1b[2;37mcat: ${args[1]}: Is a directory\x1b[0m`);
         } else {
           const content = catFile.content || '';
           content.split('\n').forEach(line => printLine(line));
@@ -266,42 +288,36 @@ export const TerminalApp: React.FC = () => {
         break;
 
       case 'mkdir':
-        if (args.length < 2) {
-          printLine('mkdir: missing operand');
-          break;
-        }
+        if (args.length < 2) { printLine('\x1b[2;37mmkdir: missing operand\x1b[0m'); break; }
         await fsStore.createFolder(currentDir.current, args[1]);
         break;
 
       case 'touch':
-        if (args.length < 2) {
-          printLine('touch: missing operand');
-          break;
-        }
+        if (args.length < 2) { printLine('\x1b[2;37mtouch: missing operand\x1b[0m'); break; }
         await fsStore.createFile(currentDir.current, args[1]);
         break;
 
       case 'rm':
-        if (args.length < 2) {
-          printLine('rm: missing operand');
-          break;
-        }
+        if (args.length < 2) { printLine('\x1b[2;37mrm: missing operand\x1b[0m'); break; }
         const rmNodes = await fsStore.listDirectory(currentDir.current);
         const rmFile = rmNodes.find(n => n.name === args[1]);
         if (rmFile) {
           await fsStore.deleteNode(rmFile.id);
         } else {
-          printLine(`rm: ${args[1]}: No such file or directory`);
+          printLine(`\x1b[2;37mrm: ${args[1]}: No such file or directory\x1b[0m`);
         }
         break;
 
       default:
-        printLine(`nova-sh: command not found: ${cmd}`);
+        printLine(`\x1b[2;37mnova-sh: command not found: ${cmd}\x1b[0m`);
     }
   };
 
   return (
-    <div className="w-full h-full bg-nova-dark p-1 terminal-container flex flex-col">
+    <div
+      className="w-full h-full terminal-container flex flex-col"
+      style={{ background: '#050505' }}
+    >
       <div ref={terminalRef} className="flex-1" />
     </div>
   );
